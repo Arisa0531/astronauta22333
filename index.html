@@ -1,27 +1,63 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>WebAR con modelo 3D</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
-  </head>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Animación 3D con Three.js</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <!-- Importa Three.js desde CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script>
+    // Escena, cámara y renderizador
+    const escena = new THREE.Scene();
+    const camara = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const render = new THREE.WebGLRenderer({ antialias: true });
+    render.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(render.domElement);
 
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="sourceType: webcam;">
-      <!-- Cargar el modelo 3D sobre el marcador Hiro -->
-      <a-marker preset="hiro">
-        <a-entity
-          gltf-model="https://cdn.glitch.global/0b845bfd-0634-420c-9df7-947e6d79a3cd/astronaut.glb?v=1700612206350"
-          scale="0.5 0.5 0.5"
-          position="0 0 0"
-          rotation="0 180 0"
-          animation-mixer>
-        </a-entity>
-      </a-marker>
+    // Luz
+    const luz = new THREE.PointLight(0xffffff, 1);
+    luz.position.set(5, 5, 5);
+    escena.add(luz);
 
-      <!-- Cámara AR -->
-      <a-entity camera></a-entity>
-    </a-scene>
-  </body>
+    // Geometría y material
+    const geometria = new THREE.TetrahedronGeometry();
+    const material = new THREE.MeshStandardMaterial({ color: 0xff0000, flatShading: true });
+    const figura = new THREE.Mesh(geometria, material);
+    escena.add(figura);
+
+    // Cámara
+    camara.position.z = 3;
+
+    // Variables de animación
+    let tiempo = 0;
+
+    // Animación
+    function animar() {
+      requestAnimationFrame(animar);
+
+      // Rotación continua
+      figura.rotation.x += 0.01;
+      figura.rotation.y += 0.015;
+
+      // Cambio de escala (pulso suave)
+      const escala = 1 + 0.2 * Math.sin(tiempo);
+      figura.scale.set(escala, escala, escala);
+
+      // Cambio de color dinámico
+      const color = new THREE.Color(`hsl(${(tiempo * 40) % 360}, 100%, 50%)`);
+      figura.material.color = color;
+
+      tiempo += 0.02;
+
+      render.render(escena, camara);
+    }
+
+    animar();
+  </script>
+</body>
 </html>
