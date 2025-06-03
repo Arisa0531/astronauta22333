@@ -12,11 +12,12 @@
   <!-- Importa Three.js desde CDN -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
   <script>
-    // Escena, cámara y renderizador
+    // Escena, cámara y renderizador con transparencia
     const escena = new THREE.Scene();
     const camara = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const render = new THREE.WebGLRenderer({ antialias: true });
+    const render = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: true para transparencia
     render.setSize(window.innerWidth, window.innerHeight);
+    render.setClearColor(0x000000, 0); // Color transparente
     document.body.appendChild(render.domElement);
 
     // Luz
